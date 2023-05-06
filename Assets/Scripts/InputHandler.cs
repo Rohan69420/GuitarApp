@@ -44,6 +44,29 @@ public class InputHandler : MonoBehaviour
         for (int i = 0; i < 6; i++) {
             if (ParentName.Equals(ParentStrings[i]))
             {
+                //checking the object name to vary the pitch accordingly
+                string objectName = obj.name;
+                float pitch = 1;
+
+                if (objectName.Equals("F")) pitch = 1 + 1 * 0.07f;
+                else if (objectName.Equals("F#/Gb")) pitch = 1 + 2 * 0.07f;
+                else if (objectName.Equals("G")) pitch = 1 + 3 * 0.07f;
+                else if (objectName.Equals("G#/Ab")) pitch = 1 + 4 * 0.07f;
+                else if (objectName.Equals("A")) pitch = 1 + 5 * 0.07f;
+                else if (objectName.Equals("A#/Bb")) pitch = 1 + 6 * 0.07f;
+                else if (objectName.Equals("B")) pitch = 1 + 7 * 0.07f;
+                else if (objectName.Equals("C")) pitch = 1 + 8 * 0.07f;
+                else if (objectName.Equals("C#/Db")) pitch = 1 + 9 * 0.07f;
+                else if (objectName.Equals("D")) pitch = 1 + 10 * 0.07f;
+                else if (objectName.Equals("D#/Eb")) pitch = 1 + 11 * 0.07f;
+                else if (objectName.Equals("E")) pitch = 1 + 12 * 0.07f;
+                else
+                {
+                    UnityEngine.Debug.Log("Out of test strings match!");
+                }
+
+                _audioSource[i].pitch = pitch;
+
                 _audioSource[i].Play();
             }
         }
