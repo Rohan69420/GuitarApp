@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,9 @@ using UnityEngine.InputSystem;
 
 public class InputHandler : MonoBehaviour
 {
+    //last played string
+    int lastPlayedString = -1; //init
+
     //slider bool
     bool held = false;
 
@@ -65,13 +69,15 @@ public class InputHandler : MonoBehaviour
                 else if (objectName.Equals("E")) pitch = 1 + 12 * 0.07f;
                 else
                 {
-                    UnityEngine.Debug.Log("Out of test strings match!");
+                    break; //we don't want audio playing if it his the pull up/down colliders
+                    //UnityEngine.Debug.Log("Out of test strings match!");
                 }
 
                 _audioSource[i].pitch = pitch;
                 
 
                 _audioSource[i].Play();
+                lastPlayedString = i;
             }
         }
 
@@ -169,9 +175,19 @@ public class InputHandler : MonoBehaviour
                 }
             }
 
+            //check if we are doing the pulls
+            //for optimization; check if the pull tabs is one above or below the last played audiosource/string
+            if (obj.name.Equals("PullSections"+lastPlayedString.ToString()) || obj.name.Equals("PullSections" + (lastPlayedString + 1).ToString()))
+            {
+                UnityEngine.Debug.Log("Pulled!");
+                //it works so we need to make sure the pulling can affect the pitch upto 0.07 factor at max distance
+
+            }
+
         }
         else
         {
+            //cannot reset here else it will reset every playing and will only play open, no need reset smh
             //reset the pitch back to original if slide and pull cancelled : not necessary
         }
 
