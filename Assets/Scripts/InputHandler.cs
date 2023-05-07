@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Security;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,7 +34,7 @@ public class InputHandler : MonoBehaviour
 
         if (!rayHit.collider) return;
 
-        UnityEngine.Debug.Log(rayHit.collider.gameObject.name);
+        //UnityEngine.Debug.Log(rayHit.collider.gameObject.name);
         //UnityEngine.Debug.Log(transform.parent.rayHit.collider.gameObject);
 
         GameObject obj;
@@ -44,7 +45,7 @@ public class InputHandler : MonoBehaviour
 
         string ParentName = ParentGameObj.name;
 
-        UnityEngine.Debug.Log(ParentName);
+       // UnityEngine.Debug.Log(ParentName);
 
 
         //using a if else tree for comparison of string, maybe should use an array and a loop
@@ -89,21 +90,21 @@ public class InputHandler : MonoBehaviour
         //if (!context.started) return;
 
         //var rayHit = Physics2D.GetRayIntersection(_mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue()));
-        if (context.started) UnityEngine.Debug.Log("Hold started!");
+       //    if (context.started) UnityEngine.Debug.Log("Hold started!");
 
-        UnityEngine.Debug.Log(context.duration.ToString());
+        //UnityEngine.Debug.Log(context.duration.ToString());
 
         // if (!rayHit.collider) return;
         if (context.performed) {
             held = true;
-            UnityEngine.Debug.Log("Holding");
+           // UnityEngine.Debug.Log("Holding");
         }
 
 
 
         if (context.canceled) {
             held = false;
-            UnityEngine.Debug.Log("Released"); 
+           // UnityEngine.Debug.Log("Released"); 
         }
     }
     // Start is called before the first frame update
@@ -126,12 +127,13 @@ public class InputHandler : MonoBehaviour
         //constantly poll if hold is performed per every new frame
         if (held) 
         {
-            UnityEngine.Debug.Log("Pitch polling");
+            //UnityEngine.Debug.Log("Pitch polling");
             var rayHit = Physics2D.GetRayIntersection(_mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue()));
 
             if (!rayHit.collider) return;
 
-            UnityEngine.Debug.Log(rayHit.collider.gameObject.name);
+            //Debug
+            //UnityEngine.Debug.Log(rayHit.collider.gameObject.name);
             //UnityEngine.Debug.Log(transform.parent.rayHit.collider.gameObject);
 
             GameObject obj;
@@ -142,7 +144,7 @@ public class InputHandler : MonoBehaviour
 
             string ParentName = ParentGameObj.name;
 
-            UnityEngine.Debug.Log(ParentName);
+           // UnityEngine.Debug.Log(ParentName);
 
 
             //using a if else tree for comparison of string, maybe should use an array and a loop
@@ -177,10 +179,24 @@ public class InputHandler : MonoBehaviour
 
             //check if we are doing the pulls
             //for optimization; check if the pull tabs is one above or below the last played audiosource/string
-            if (obj.name.Equals("PullSections"+lastPlayedString.ToString()) || obj.name.Equals("PullSections" + (lastPlayedString + 1).ToString()))
+            if (obj.name.Equals("PullSections"+lastPlayedString.ToString()) || obj.name.Equals("PullSections"+(lastPlayedString+1).ToString()))
             {
-                UnityEngine.Debug.Log("Pulled!");
-                //it works so we need to make sure the pulling can affect the pitch upto 0.07 factor at max distance
+               // UnityEngine.Debug.Log("Pulled!");
+                /* it works so we need to make sure the pulling can affect the pitch upto 0.07 factor at max distance
+
+                size of string 0.39 max and size of pull sections is 0.56016
+                
+                find the difference in the Y position of current mouse pos and the audio source [position of string and 
+                audio source has been matched in Y axis for this to work with one one index reference to audiosource instead
+                of the parent of last played string or the string itself */
+
+                float diff = Mathf.Abs(_audioSource[lastPlayedString].transform.position.y - Mouse.current.position.y.ReadValue());
+                UnityEngine.Debug.Log(diff.ToString());
+
+                //change pitch with pull
+                /* with a quick debug we found out that the value changes from 184 to 202 so take 202 for 0.7 */
+                float tempPitch = _audioSource[lastPlayedString].pitch; 
+                _audioSource[lastPlayedString].pitch = tempPitch + 0.07f * diff / 202.7f;
 
             }
 
